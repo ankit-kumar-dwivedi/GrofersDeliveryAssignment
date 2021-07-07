@@ -1,5 +1,6 @@
 package com.deliveryScheduler.demo.dto;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
@@ -10,7 +11,9 @@ import java.util.List;
  **/
 @Data
 public class ScheduleOrdersRequestDTO {
+    @ApiModelProperty(notes = "list of orders")
     private List<OrderDTO> orders;
+    @ApiModelProperty(notes = "preferred slot number (optional)")
     private Long slotNumber;
 
 }

@@ -13,8 +13,8 @@ public class DeliveryPartners extends AbstractEntity {
     private String name;
 
     @Lob
-    @JoinColumn(name = "delivery_vehicles_id", referencedColumnName = "id")
-    @ManyToOne(fetch = FetchType.LAZY, targetEntity = DeliveryVehicles.class)
+    @JoinColumn(name = "delivery_vehicles_id")
+    @ManyToOne(fetch = FetchType.LAZY)
     private DeliveryVehicles vehicle;
 
     @Column(name = "name", nullable = false)

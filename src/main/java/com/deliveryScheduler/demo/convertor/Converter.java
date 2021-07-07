@@ -7,7 +7,6 @@ import com.deliveryScheduler.demo.database.entity.Slot;
 import com.deliveryScheduler.demo.dto.AvailableVehicleDTO;
 import com.deliveryScheduler.demo.dto.OrderDTO;
 
-import java.util.List;
 
 /**
  * @author Ankit Dwivedi

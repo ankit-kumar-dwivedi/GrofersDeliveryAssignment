@@ -23,7 +23,7 @@ import java.util.List;
  * @version 1.0, 07/07/21
  **/
 @Component
-public class InitializeEnities {
+public class InitializeEntities {
 
     @Autowired
     DeliveryVehiclesRepository deliveryVehiclesRepository;
@@ -42,6 +42,7 @@ public class InitializeEnities {
         initializeEntities();
     }
 
+    // initialize data when restarting server
     void initializeEntities() {
         DeliveryVehicles deliveryBikes = new DeliveryVehicles();
         deliveryBikes.setVehicleType(VehicleTypeEnum.BIKE);
@@ -101,7 +102,7 @@ public class InitializeEnities {
         for (long i = 0; i < vehicles.getDailyCount(); ++i) {
             DeliveryPartners deliveryPartners = new DeliveryPartners();
             deliveryPartners.setVehicle(vehicles);
-            deliveryPartners.setName("Partner" + i);
+            deliveryPartners.setName("Partner " + vehicles.getVehicleType() + i);
             deliveryPartnerRepository.save(deliveryPartners);
         }
     }

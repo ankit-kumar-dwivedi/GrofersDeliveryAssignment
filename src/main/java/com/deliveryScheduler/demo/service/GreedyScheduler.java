@@ -62,6 +62,7 @@ public class GreedyScheduler implements SchedulerStrategy {
                 .collect(Collectors.toSet());
         List<OrderDTO> unassignedOrders = new ArrayList<>();
         assignPartnerToOrders(orderDTO, vehiclesAllowedForSlot, unassignedOrders, preferredSlot);
+        // remove partially used vehicles as they are assigned now
         availablePartners.removeIf(p -> p.getRemainingCapacity() < p.getMaxCapacity());
         while (CollectionUtils.isNotEmpty(unassignedOrders) && preferredSlot != null) {
             // try reassigning on next slot
@@ -90,8 +91,6 @@ public class GreedyScheduler implements SchedulerStrategy {
     }
 
     private void assignPartnerToOrders(List<OrderDTO> ordersDTOList, Set<VehicleTypeEnum> vehiclesAllowedForSlot, List<OrderDTO> unassignedOrders, Slot preferredSlot) {
-        List<Orders> orders = new ArrayList<>();
-        List<OrderDelivery> orderDeliveries = new ArrayList<>();
         for (OrderDTO orderDTO : ordersDTOList) {
             boolean assigned = false;
             for (int i = 0; i < availablePartners.size(); i++) {
@@ -105,9 +104,9 @@ public class GreedyScheduler implements SchedulerStrategy {
                     // get order entity
                     Orders order = Converter.convertToOrder(orderDTO);
                     // order delivery entity
+                    order = ordersRepository.save(order);
                     OrderDelivery orderDelivery = getOrderDelivery(order, availableVehicleDTO, preferredSlot);
-                    orders.add(order);
-                    orderDeliveries.add(orderDelivery);
+                    orderDelivery = orderDeliveryRepository.save(orderDelivery);
                     remainingSlotCapacity -= orderDTO.getOrderWeight();
                     assigned = true;
                     break;
@@ -116,12 +115,6 @@ public class GreedyScheduler implements SchedulerStrategy {
             if (!assigned) {
                 unassignedOrders.add(orderDTO);
             }
-        }
-        if (!orders.isEmpty()) {
-            ordersRepository.saveAll(orders);
-        }
-        if (!orderDeliveries.isEmpty()) {
-            orderDeliveryRepository.saveAll(orderDeliveries);
         }
     }
 

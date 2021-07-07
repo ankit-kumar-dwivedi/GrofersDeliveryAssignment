@@ -1,9 +1,6 @@
 package com.deliveryScheduler.demo.service;
 
-import com.deliveryScheduler.demo.database.entity.AbstractEntity;
-import com.deliveryScheduler.demo.database.entity.DeliveryPartners;
-import com.deliveryScheduler.demo.database.entity.OrderDelivery;
-import com.deliveryScheduler.demo.database.entity.Slot;
+import com.deliveryScheduler.demo.database.entity.*;
 import com.deliveryScheduler.demo.dto.ScheduleOrdersRequestDTO;
 import com.deliveryScheduler.demo.dto.ScheduledOrdersResponseDTO;
 import com.deliveryScheduler.demo.enums.SchedulerStrategyEnum;
@@ -56,9 +53,10 @@ public class SchedulerServiceImpl implements  SchedulerService{
             List<Long> orderIds = orderDeliveryList
                     .stream()
                     .map(OrderDelivery::getOrder)
-                    .map(AbstractEntity::getId)
+                    .map(Orders::getId)
                     .collect(Collectors.toList());
             responseDTO.setListOrderIdsAssigned(orderIds);
+            list.add(responseDTO);
         });
         return list;
     }
