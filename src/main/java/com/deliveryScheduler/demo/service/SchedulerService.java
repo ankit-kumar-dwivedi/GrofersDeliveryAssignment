@@ -14,4 +14,6 @@ public interface SchedulerService {
     void scheduleOrders(ScheduleOrdersRequestDTO requestDTO);
 
     List<ScheduledOrdersResponseDTO> fetchScheduledOrders(Long slotNumber);
+
+    List<ScheduledOrdersResponseDTO> fetchAllScheduledOrders();
 }

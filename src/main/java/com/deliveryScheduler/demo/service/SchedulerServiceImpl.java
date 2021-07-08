@@ -1,5 +1,6 @@
 package com.deliveryScheduler.demo.service;
 
+import com.deliveryScheduler.demo.convertor.Converter;
 import com.deliveryScheduler.demo.database.entity.*;
 import com.deliveryScheduler.demo.dto.ScheduleOrdersRequestDTO;
 import com.deliveryScheduler.demo.dto.ScheduledOrdersResponseDTO;
@@ -8,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author Ankit Dwivedi
@@ -42,23 +42,14 @@ public class SchedulerServiceImpl implements  SchedulerService{
 
     @Override
     public List<ScheduledOrdersResponseDTO> fetchScheduledOrders(Long slotNumber) {
-        List<ScheduledOrdersResponseDTO> list = new ArrayList<>();
         List<OrderDelivery> orderDeliveries = orderDeliveryService.findAllOrdersForSlot(slotNumber);
-        Map<DeliveryPartners, List<OrderDelivery>> deliveryPartnersListMap =
-                orderDeliveries.stream().collect(Collectors.groupingBy(OrderDelivery::getDeliveryPartner));
-        deliveryPartnersListMap.forEach((partner,orderDeliveryList)->{
-            ScheduledOrdersResponseDTO responseDTO = new ScheduledOrdersResponseDTO();
-            responseDTO.setDeliveryPartnerId(partner.getId());
-            responseDTO.setVehicleType(partner.getVehicle().getVehicleType().name().toLowerCase());
-            List<Long> orderIds = orderDeliveryList
-                    .stream()
-                    .map(OrderDelivery::getOrder)
-                    .map(Orders::getId)
-                    .collect(Collectors.toList());
-            responseDTO.setListOrderIdsAssigned(orderIds);
-            list.add(responseDTO);
-        });
-        return list;
+        return Converter.convertToScheduledOrdersResponseDTOList(orderDeliveries, false);
+    }
+
+    @Override
+    public List<ScheduledOrdersResponseDTO> fetchAllScheduledOrders() {
+        List<OrderDelivery> orderDeliveries = orderDeliveryService.getAllOrderDeliveries();
+        return Converter.convertToScheduledOrdersResponseDTOList(orderDeliveries, true);
     }
 
 }

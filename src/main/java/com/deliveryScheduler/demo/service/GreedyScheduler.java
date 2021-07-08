@@ -51,6 +51,9 @@ public class GreedyScheduler implements SchedulerStrategy {
         if (lastUsedSlot == null || lastUsedSlot.getId() < preferredSlot.getId()) {
             initSlotConstants(preferredSlot);
         }
+        if (preferredSlot.getId() > lastUsedSlot.getId()) {
+            availablePartners.removeIf(p -> p.getRemainingCapacity() < p.getMaxCapacity());
+        }
         //sorted according to wt in decreasing order
         orderDTO.sort(Collections.reverseOrder(Comparator.comparingLong(OrderDTO::getOrderWeight)));
         Set<VehicleTypeEnum> vehiclesAllowedForSlot = CollectionUtils.emptyIfNull(
@@ -63,17 +66,30 @@ public class GreedyScheduler implements SchedulerStrategy {
         List<OrderDTO> unassignedOrders = new ArrayList<>();
         assignPartnerToOrders(orderDTO, vehiclesAllowedForSlot, unassignedOrders, preferredSlot);
         // remove partially used vehicles as they are assigned now
-        availablePartners.removeIf(p -> p.getRemainingCapacity() < p.getMaxCapacity());
         while (CollectionUtils.isNotEmpty(unassignedOrders) && preferredSlot != null) {
             // try reassigning on next slot
             preferredSlot = getNextSlot(preferredSlot);
+            orderDTO = unassignedOrders;
             unassignedOrders = new ArrayList<>();
             if (preferredSlot != null) {
-                assignPartnerToOrders(orderDTO, vehiclesAllowedForSlot, unassignedOrders, preferredSlot);
                 availablePartners.removeIf(p -> p.getRemainingCapacity() < p.getMaxCapacity());
+                resetSlotCapacityAndAllowedVehicles(preferredSlot, vehiclesAllowedForSlot);
+                assignPartnerToOrders(orderDTO, vehiclesAllowedForSlot, unassignedOrders, preferredSlot);
             }
         }
     }
+
+    private void resetSlotCapacityAndAllowedVehicles(Slot preferredSlot, Set<VehicleTypeEnum> vehiclesAllowedForSlot) {
+        remainingSlotCapacity = preferredSlot.getCapacity();
+        vehiclesAllowedForSlot = CollectionUtils.emptyIfNull(
+                vehicleSlotRepository.findBySlotIdAndDeletedFalse(preferredSlot.getId())
+        )
+                .stream()
+                .map(VehicleSlot::getVehicle)
+                .map(DeliveryVehicles::getVehicleType)
+                .collect(Collectors.toSet());
+    }
+
 
     private Slot getNextSlot(Slot preferredSlot) {
        return slotRepository.findFirstByIdGreaterThan(preferredSlot.getId());

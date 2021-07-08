@@ -6,7 +6,12 @@ import com.deliveryScheduler.demo.database.entity.Orders;
 import com.deliveryScheduler.demo.database.entity.Slot;
 import com.deliveryScheduler.demo.dto.AvailableVehicleDTO;
 import com.deliveryScheduler.demo.dto.OrderDTO;
+import com.deliveryScheduler.demo.dto.ScheduledOrdersResponseDTO;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author Ankit Dwivedi
@@ -36,5 +41,27 @@ public class Converter {
         entity.setOrder(order);
         entity.setSlot(preferredSlot);
         return entity;
+    }
+
+    public static List<ScheduledOrdersResponseDTO> convertToScheduledOrdersResponseDTOList(List<OrderDelivery> orderDeliveries, boolean setSlotInfo) {
+        List<ScheduledOrdersResponseDTO> list = new ArrayList<>();
+        Map<DeliveryPartners, List<OrderDelivery>> deliveryPartnersListMap =
+                orderDeliveries.stream().collect(Collectors.groupingBy(OrderDelivery::getDeliveryPartner));
+        deliveryPartnersListMap.forEach((partner,orderDeliveryList)->{
+            ScheduledOrdersResponseDTO responseDTO = new ScheduledOrdersResponseDTO();
+            responseDTO.setDeliveryPartnerId(partner.getId());
+            responseDTO.setVehicleType(partner.getVehicle().getVehicleType().name().toLowerCase());
+            if (setSlotInfo) {
+                responseDTO.setSlotNumber(orderDeliveryList.get(0).getSlot().getId());
+            }
+            List<Long> orderIds = orderDeliveryList
+                    .stream()
+                    .map(OrderDelivery::getOrder)
+                    .map(Orders::getId)
+                    .collect(Collectors.toList());
+            responseDTO.setListOrderIdsAssigned(orderIds);
+            list.add(responseDTO);
+        });
+        return list;
     }
 }

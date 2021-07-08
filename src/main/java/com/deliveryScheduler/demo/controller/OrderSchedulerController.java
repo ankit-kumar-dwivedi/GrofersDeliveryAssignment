@@ -43,4 +43,10 @@ public class OrderSchedulerController {
         return new Response<>(schedulerService.fetchScheduledOrders(slotNumber));
     }
 
+    @ApiOperation(value = "This Api is used to get all schedule orders")
+    @GetMapping("/all")
+    public Response<List<ScheduledOrdersResponseDTO>> fetchAllScheduledOrders() {
+        return new Response<>(schedulerService.fetchAllScheduledOrders());
+    }
+
 }

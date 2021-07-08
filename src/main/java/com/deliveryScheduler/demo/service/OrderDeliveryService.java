@@ -20,4 +20,8 @@ public class OrderDeliveryService {
     public List<OrderDelivery> findAllOrdersForSlot(Long slotNumber) {
         return orderDeliveryRepository.findAllBySlotIdAndDeletedFalse(slotNumber);
     }
+
+    public List<OrderDelivery> getAllOrderDeliveries() {
+        return orderDeliveryRepository.findAll();
+    }
 }
