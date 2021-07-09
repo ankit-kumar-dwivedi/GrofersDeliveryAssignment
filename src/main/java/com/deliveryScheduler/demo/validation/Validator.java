@@ -1,4 +1,4 @@
-package com.deliveryScheduler.demo.Validation;
+package com.deliveryScheduler.demo.validation;
 
 import com.deliveryScheduler.demo.dto.OrderDTO;
 import com.deliveryScheduler.demo.dto.ScheduleOrdersRequestDTO;
@@ -20,6 +20,9 @@ public class Validator {
             }
             if (order.getOrderWeight() == null) {
                 throw new ApiException("400","Bad request orders weight cannot be empty");
+            }
+            if (order.getOrderWeight() > 100L) {
+                throw new ApiException("400","Weight greater than 100 cannot be served");
             }
         }
     }

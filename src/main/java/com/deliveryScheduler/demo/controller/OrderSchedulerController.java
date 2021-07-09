@@ -1,6 +1,6 @@
 package com.deliveryScheduler.demo.controller;
 
-import com.deliveryScheduler.demo.Validation.Validator;
+import com.deliveryScheduler.demo.validation.Validator;
 import com.deliveryScheduler.demo.dto.Response;
 import com.deliveryScheduler.demo.dto.ScheduleOrdersRequestDTO;
 import com.deliveryScheduler.demo.dto.ScheduledOrdersResponseDTO;

@@ -77,6 +77,8 @@ public class GreedyScheduler implements SchedulerStrategy {
                 assignPartnerToOrders(orderDTO, vehiclesAllowedForSlot, unassignedOrders, preferredSlot);
             }
         }
+        // no slot left to assign unassignedOrders
+        // we can throw a exception or return unassigned orders
     }
 
     private void resetSlotCapacityAndAllowedVehicles(Slot preferredSlot, Set<VehicleTypeEnum> vehiclesAllowedForSlot) {
